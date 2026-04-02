@@ -330,7 +330,7 @@
 
 /* Footer */
 .footer {
-  padding: var(--spacing-xl) 7% var(--spacing-md);
+  padding: 20rem 7% var(--spacing-md);
   background: linear-gradient(to bottom, var(--color-base), #4A6E82);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
