@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 
+/* Reusable premium divider between sections */
+const SectionDivider = () => (
+  <div className="section-divider reveal">
+    <div className="divider-line"></div>
+  </div>
+)
+
 function App() {
   const [scrolled, setScrolled] = useState(false)
 
@@ -46,7 +53,7 @@ function App() {
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50)
-      
+
       // Parallax effect for hero
       const heroBg = document.querySelector('.hero-bg img')
       if (heroBg) {
@@ -78,6 +85,7 @@ function App() {
 
   return (
     <div className="app">
+      {/* NAVBAR */}
       <header className={`navbar ${scrolled ? 'scrolled' : ''}`}>
         <div className="logo-container">
           <a href="#home" className="logo-link">
@@ -114,34 +122,44 @@ function App() {
           </div>
         </section>
 
-        {/* ABOUT SECTION */}
+        {/* ── DIVIDER ── */}
+        <SectionDivider />
+
+        {/* ABOUT / PHILOSOPHY SECTION */}
         <section id="about" className="section">
           <div className="about-grid">
             <div className="section-header reveal">
-              <span className="section-label">Our Philosophy</span>
+              <span className="section-label">
+                <span className="section-num">01</span> Our Philosophy
+              </span>
               <h2 className="section-title">We don't record events; we craft <em>cinematic legacies</em>.</h2>
             </div>
-            <div className="reveal reveal-delay-1">
+            <div className="premium-box reveal reveal-delay-1">
               <p className="about-text">
-                By blending raw, unscripted emotion with high-end, editorial aesthetics, 
-                we create timeless art that speaks directly to the soul. 
+                By blending raw, unscripted emotion with high-end, editorial aesthetics,
+                we create timeless art that speaks directly to the soul.
                 Based in major hubs—available worldwide.
               </p>
             </div>
           </div>
         </section>
 
+        {/* ── DIVIDER ── */}
+        <SectionDivider />
+
         {/* PORTFOLIO SECTION */}
-        <section id="portfolio" className="section" style={{ paddingBottom: 0 }}>
+        <section id="portfolio" className="section">
           <div className="section-header reveal">
-            <span className="section-label">Portfolios</span>
+            <span className="section-label">
+              <span className="section-num">02</span> Portfolios
+            </span>
             <h2 className="section-title">Visual Narratives</h2>
           </div>
 
           <div className="portfolio-grid">
             {portfolioItems.map((item, index) => (
-              <div 
-                key={item.id} 
+              <div
+                key={item.id}
                 className={`portfolio-item reveal reveal-delay-${(index % 3) + 1}`}
               >
                 <div className="item-wrapper mask-reveal">
@@ -155,21 +173,23 @@ function App() {
             ))}
           </div>
         </section>
+
+        {/* ── DIVIDER ── */}
+        <SectionDivider />
       </main>
 
-      {/* FOOTER */}
+      {/* FOOTER / INQUIRE */}
       <footer id="contact" className="footer">
-        <div className="footer-main reveal">
-          <div className="footer-cta">
-            <h2>Let's Create<br /><em>Something Magic</em></h2>
-            <a href="mailto:hello@auremweddings.com" className="btn-premium">Inquire Now</a>
-          </div>
-          <div className="footer-info reveal reveal-delay-1">
-            <p style={{ color: 'var(--color-text-muted)', maxWidth: '400px', fontSize: '0.9rem' }}>
-              Currently accepting limited bookings for 2024 & 2025. 
-              Each bespoke film is curated with obsessive attention to detail.
-            </p>
-          </div>
+        <div className="footer-cta-card reveal">
+          <span className="section-label">
+            <span className="section-num">03</span> Inquire
+          </span>
+          <h2>Let's Create<br /><em>Something Magic</em></h2>
+          <p className="footer-cta-desc">
+            Currently accepting limited bookings for 2025 & 2026.
+            Each bespoke film is curated with obsessive attention to detail.
+          </p>
+          <a href="mailto:hello@auremweddings.com" className="btn-premium">Inquire Now</a>
         </div>
 
         <div className="footer-bottom reveal reveal-delay-2">
@@ -186,4 +206,3 @@ function App() {
 }
 
 export default App
-
