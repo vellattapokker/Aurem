@@ -132,7 +132,7 @@ function App() {
         </section>
 
         {/* PORTFOLIO SECTION */}
-        <section id="portfolio" className="section">
+        <section id="portfolio" className="section" style={{ paddingBottom: 0 }}>
           <div className="section-header reveal">
             <span className="section-label">Portfolios</span>
             <h2 className="section-title">Visual Narratives</h2>
