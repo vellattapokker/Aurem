@@ -103,7 +103,9 @@ function App() {
 
           <div className="hero-content reveal">
             <img src="/logo.png" alt="Aurem Weddings Logo" className="hero-logo-img fade-in" />
-            <span className="hero-subtitle">Directed by Emotion • Cinematic Legacies</span>
+            <span className="hero-subtitle">
+              <span className="highlight-text">Directed by Emotion</span> • Cinematic Legacies
+            </span>
           </div>
 
           <div className="scroll-indicator reveal reveal-delay-2">
