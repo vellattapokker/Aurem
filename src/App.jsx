@@ -105,7 +105,7 @@ function App() {
         {/* HERO SECTION */}
         <section id="home" className="hero">
           <div className="hero-bg">
-            <img src={portfolioItems[0].src} alt="Aurem Weddings Cinematic Background" />
+            <img src="/hero.jpg" alt="Aurem Weddings — Bonded" />
           </div>
           <div className="hero-overlay"></div>
 
