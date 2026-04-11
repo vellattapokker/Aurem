@@ -109,8 +109,7 @@ const Footer = () => (
   <footer id="contact" className="footer">
      <div className="footer-stack">
         <div className="footer-socials">
-           <a href="#">Fb</a><a href="#">Tw</a><a href="#">Ig</a><a href="#">Pn</a>
-           <a href="#">Yt</a><a href="#">Vm</a><a href="#">Li</a>
+           <a href="https://www.instagram.com/auremweddings" target="_blank" rel="noopener noreferrer">Instagram</a>
         </div>
         <nav className="footer-nav">
            <Link to="/">Home</Link>
@@ -119,6 +118,7 @@ const Footer = () => (
            <Link to="/#films">Films</Link>
         </nav>
         <div className="footer-copyright">
+           <p>Based in Ernakulam, Kerala</p>
            <p>All content Copyright &copy; {new Date().getFullYear()} Aurem Weddings</p>
         </div>
         <button className="back-to-top" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
@@ -310,6 +310,7 @@ function App() {
   const [scrolled, setScrolled] = useState(false)
   const [activeHero, setActiveHero] = useState(0)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [hoveredMnu, setHoveredMnu] = useState(null)
   const [storySlideIndex, setStorySlideIndex] = useState(0)
   
   const [galleryOpen, setGalleryOpen] = useState(false)
@@ -331,11 +332,19 @@ function App() {
     document.body.style.overflow = (menuOpen || galleryOpen) ? 'hidden' : 'unset'
   }, [menuOpen, galleryOpen])
 
-  const toggleMenu = () => setMenuOpen(!menuOpen)
+  const toggleMenu = () => { setMenuOpen(!menuOpen); setHoveredMnu(null); }
   const openGallery = (imgs, index = 0) => { setGalleryImages(imgs); setGalleryIndex(index); setGalleryOpen(true); }
   const closeGallery = () => setGalleryOpen(false)
   const nextImage = (e) => { e.stopPropagation(); setGalleryIndex(p => (p + 1) % galleryImages.length); }
   const prevImage = (e) => { e.stopPropagation(); setGalleryIndex(p => (p - 1 + galleryImages.length) % galleryImages.length); }
+
+  const MENU_ASSETS = {
+    "Home": "/assets/IMG_0213.JPG",
+    "Philosophy": "/assets/IMG_7152.JPG",
+    "Stories": "/assets/IMG_5853.JPG",
+    "Films": "/assets/IMG_6219.JPEG",
+    "Inquire": "/assets/IMG_6381.JPG"
+  }
 
   return (
     <BrowserRouter>
@@ -343,17 +352,63 @@ function App() {
       <div className={`app ${menuOpen ? 'menu-active' : ''}`}>
         <Navbar scrolled={scrolled} menuOpen={menuOpen} toggleMenu={toggleMenu} />
         
-        {/* MENU OVERLAY */}
+        {/* CINEMATIC PORTAL MENU */}
         <div className={`menu-overlay ${menuOpen ? 'open' : ''}`}>
+          {/* Background Peek Layer */}
+          <div className="menu-bg-peeks">
+            {Object.entries(MENU_ASSETS).map(([name, url]) => (
+              <div 
+                key={name} 
+                className={`menu-bg-img ${hoveredMnu === name ? 'active' : ''}`} 
+                style={{ backgroundImage: `url(${url})` }}
+              ></div>
+            ))}
+          </div>
+
           <button className="menu-close" onClick={toggleMenu}><div className="close-icon"></div><span>CLOSE</span></button>
-          <div className="menu-content">
-            <nav className="menu-nav">
-               <Link to="/" onClick={toggleMenu} style={{"--i": 1}}>Home</Link>
-               <Link to="/#about" onClick={toggleMenu} style={{"--i": 2}}>Philosophy</Link>
-               <Link to="/#stories" onClick={toggleMenu} style={{"--i": 3}}>Stories</Link>
-               <Link to="/#films" onClick={toggleMenu} style={{"--i": 4}}>Films</Link>
-               <Link to="/#contact" onClick={toggleMenu} style={{"--i": 5}}>Inquire</Link>
-            </nav>
+          
+          <div className="menu-content-grid">
+            <div className="menu-nav-col">
+              <nav className="menu-nav">
+                 {Object.keys(MENU_ASSETS).map((name, i) => {
+                   let target = "/";
+                   if (name === "Philosophy") target = "/#about";
+                   else if (name === "Stories") target = "/#stories";
+                   else if (name === "Films") target = "/#films";
+                   else if (name === "Inquire") target = "/#contact";
+
+                   return (
+                     <Link 
+                      key={name}
+                      to={target} 
+                      onClick={toggleMenu} 
+                      onMouseEnter={() => setHoveredMnu(name)}
+                      onMouseLeave={() => setHoveredMnu(null)}
+                      style={{"--i": i + 1}}
+                     >
+                       {name}
+                     </Link>
+                   )
+                 })}
+              </nav>
+            </div>
+
+            <div className="menu-detail-col">
+               <div className="menu-brand-details">
+                  <div className="detail-item" style={{"--i": 6}}>
+                    <span className="label">Based in</span>
+                    <span className="value">Ernakulam, Kerala</span>
+                  </div>
+                  <div className="detail-item" style={{"--i": 7}}>
+                    <span className="label">Social</span>
+                    <a href="https://www.instagram.com/auremweddings" target="_blank" rel="noopener noreferrer" className="value">Instagram</a>
+                  </div>
+                  <div className="detail-item" style={{"--i": 8}}>
+                    <span className="label">Philosophy</span>
+                    <p className="value-para">Directed by Emotion. Captured with Heart. Timeless stories told with soul.</p>
+                  </div>
+               </div>
+            </div>
           </div>
         </div>
 
