@@ -1,209 +1,372 @@
 import { useEffect, useState } from 'react'
+import { BrowserRouter, Routes, Route, Link, useParams, useLocation } from 'react-router-dom'
 import './App.css'
 
-/* Reusable premium divider between sections */
-const SectionDivider = () => (
-  <div className="section-divider reveal">
-    <div className="divider-line"></div>
+// ═══════════════════════════════════════════
+// DATA DEFINITIONS
+// ═══════════════════════════════════════════
+const STORIES_DATA = [
+  { 
+    id: "modern-noir", 
+    title: "Selection 01: Modern Noir", 
+    cover: "/assets/IMG_5853.JPG",
+    description: "A high-fashion narrative set against the golden pulse of the night city.",
+    moments: [
+      { name: "The Evening Pulse", images: ["/assets/IMG_5853.JPG", "/assets/IMG_5849.JPG"] },
+      { name: "City Shadows", images: ["/assets/IMG_5850.JPG", "/assets/IMG_6254.JPG"] },
+      { name: "Noir Reflections", images: ["/assets/IMG_6263.JPG", "/assets/IMG_6464.JPG"] }
+    ]
+  },
+  { 
+    id: "moody-monochrome", 
+    title: "Selection 02: Moody Monochrome", 
+    cover: "/assets/IMG_7212.JPEG",
+    description: "A dramatic, high-contrast exploration of raw emotion and timeless silence.",
+    moments: [
+      { name: "The Sacred Space", images: ["/assets/IMG_7212.JPEG", "/assets/IMG_7213.JPEG"] },
+      { name: "Silent Echoes", images: ["/assets/IMG_7215.JPEG", "/assets/IMG_7216.JPEG"] },
+      { name: "Timeless Frames", images: ["/assets/IMG_7217.JPEG", "/assets/IMG_7221.JPEG"] }
+    ]
+  },
+  { 
+    id: "ethereal-light", 
+    title: "Selection 03: Ethereal Light", 
+    cover: "/assets/IMG_7146.JPG",
+    description: "Soft pastel morning light and romantic fine-art aesthetics.",
+    moments: [
+      { name: "The Morning Glow", images: ["/assets/IMG_7146.JPG", "/assets/IMG_7150.JPG"] },
+      { name: "Soft Whispers", images: ["/assets/IMG_7154.JPG", "/assets/IMG_7159.JPG"] },
+      { name: "Coastal Haze", images: ["/assets/IMG_7160.JPG", "/assets/IMG_7161.JPG"] }
+    ]
+  },
+  { 
+    id: "malabar-union", 
+    title: "Selection 04: The Malabar Union", 
+    cover: "/assets/IMG_6373.JPG",
+    description: "A cinematic documentary of a traditional union, told with warmth and soul.",
+    moments: [
+      { name: "The Rituals", images: ["/assets/IMG_6373.JPG", "/assets/IMG_6374.JPG"] },
+      { name: "The Union", images: ["/assets/IMG_6375.JPG", "/assets/IMG_6376.JPG"] },
+      { name: "Heritage", images: ["/assets/IMG_6377.JPG", "/assets/IMG_6378.JPG"] }
+    ]
+  }
+]
+
+const FEATURED_FILMS = [
+  {
+    id: 1,
+    title: "The Golden Hour",
+    category: "Cinematic Film",
+    src: "/assets/IMG_6219.JPEG",
+    desc: "An epic narrative of love and legacy, crafted with a cinematic eye for detail and emotion."
+  },
+  {
+    id: 2,
+    title: "Soulful Whispers",
+    category: "Highlights Film",
+    src: "/assets/IMG_6213.JPEG",
+    desc: "Capturing the unspoken moments and raw energy that make every union unique and timeless."
+  }
+]
+
+// ═══════════════════════════════════════════
+// SHARED COMPONENTS
+// ═══════════════════════════════════════════
+
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
+
+const Navbar = ({ scrolled, menuOpen, toggleMenu }) => (
+  <header className={`navbar ${scrolled ? 'scrolled' : ''} ${menuOpen ? 'hidden' : ''}`}>
+    <nav className="nav-container">
+      <div className="nav-group left">
+        <Link to="/#about">About</Link>
+        <Link to="/#stories">Stories</Link>
+      </div>
+      
+      <Link to="/" className="logo-link">
+        <img src="/assets/nav%20logo.png" alt="Aurem Logo" className="navbar-logo-img" />
+        <img src="/assets/nav%20name.png" alt="Aurem Weddings" className="navbar-name-img" />
+      </Link>
+      
+      <div className="nav-group right">
+        <Link to="/#films">Films</Link>
+        <button className="menu-toggle" onClick={toggleMenu}>
+          <div className="burger">
+            <div className="line"></div>
+            <div className="line"></div>
+          </div>
+        </button>
+      </div>
+    </nav>
+  </header>
+)
+
+const Footer = () => (
+  <footer id="contact" className="footer">
+     <div className="footer-stack">
+        <div className="footer-socials">
+           <a href="#">Fb</a><a href="#">Tw</a><a href="#">Ig</a><a href="#">Pn</a>
+           <a href="#">Yt</a><a href="#">Vm</a><a href="#">Li</a>
+        </div>
+        <nav className="footer-nav">
+           <Link to="/">Home</Link>
+           <Link to="/#about">Philosophy</Link>
+           <Link to="/#stories">Stories</Link>
+           <Link to="/#films">Films</Link>
+        </nav>
+        <div className="footer-copyright">
+           <p>All content Copyright &copy; {new Date().getFullYear()} Aurem Weddings</p>
+        </div>
+        <button className="back-to-top" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+           <span className="arrow">&uarr;</span>
+        </button>
+     </div>
+  </footer>
+)
+
+const Lightbox = ({ open, images, index, close, next, prev }) => (
+  <div className={`lightbox ${open ? 'open' : ''}`} onClick={close}>
+    <div className="lightbox-controls">
+       <button className="lb-close" onClick={close}>&times;</button>
+       <div className="lb-counter">
+          {(index + 1).toString().padStart(2, '0')} / {images.length.toString().padStart(2, '0')}
+       </div>
+    </div>
+    <button className="lb-prev" onClick={prev}>&lsaquo;</button>
+    <button className="lb-next" onClick={next}>&rsaquo;</button>
+    <div className="lb-stage">
+      {images.map((img, idx) => (
+        <img key={idx} src={img} className={`lb-img ${idx === index ? 'active' : ''}`} alt="" />
+      ))}
+    </div>
   </div>
 )
 
+// ═══════════════════════════════════════════
+// PAGE COMPONENTS
+// ═══════════════════════════════════════════
+
+const HomePage = ({ activeHero, storySlideIndex, openGallery }) => (
+  <main>
+    {/* HERO */}
+    <section id="home" className="hero-container">
+      <div className="hero-slider">
+        {["/assets/IMG_0213.JPG", "/assets/IMG_7152.JPG", "/assets/IMG_6219.JPEG"].map((img, i) => (
+          <div key={i} className={`hero-slide ${i === activeHero ? 'active' : ''}`} style={{ backgroundImage: `url(${img})` }}></div>
+        ))}
+        <div className="hero-overlay"></div>
+        <div className="hero-content">
+          <h1 className="hero-title">Timeless Stories <em>Told with Soul</em></h1>
+        </div>
+      </div>
+    </section>
+
+    {/* INTRO */}
+    <section id="about" className="section intro">
+      <div className="container-sm">
+         <h2 className="editorial-title">A Narrative of Love, <em>Told with Soul</em></h2>
+         <div className="brand-story">
+           <p>At Aurem, we capture the unscripted whispers of your union. Our philosophy is rooted in raw energy and raw emotion that make every story unique.</p>
+           <p>Using cinematic storytelling and editorial aesthetics, we allow you to relive the soul of your wedding day, forever.</p>
+           <div className="editorial-divider"></div>
+         </div>
+      </div>
+    </section>
+
+    {/* FILMS */}
+    <section id="films" className="section films-section">
+       <div className="section-header">
+          <span className="label">Cinematography</span>
+          <h2 className="title">The Films</h2>
+       </div>
+       <div className="films-grid">
+          {FEATURED_FILMS.map((film, index) => (
+            <div key={film.id} className={`film-row ${index % 2 !== 0 ? 'reverse' : ''}`}>
+               <div className="film-media story-img-wrap" onClick={() => openGallery([film.src])}>
+                  <img src={film.src} alt={film.title} className="active" />
+                  <div className="play-btn"></div>
+               </div>
+               <div className="film-info">
+                  <span className="cat">{film.category}</span>
+                  <h3 className="film-title">{film.title}</h3>
+                  <p className="film-desc">{film.desc}</p>
+                  <button className="link-arrow" onClick={() => openGallery([film.src])}>View Film Stage</button>
+               </div>
+            </div>
+          ))}
+       </div>
+    </section>
+
+    {/* STORIES */}
+    <section id="stories" className="section stories-section">
+       <div className="section-header">
+          <span className="label">Photography</span>
+          <h2 className="title">Every Photo Tells a Story</h2>
+       </div>
+       <div className="stories-grid">
+          {STORIES_DATA.map(story => (
+            <Link to={`/album/${story.id}`} key={story.id} className="story-card">
+               <div className="story-img-wrap">
+                  {story.moments[0].images.map((img, idx) => (
+                    <img key={idx} src={img} alt="" className={idx === (storySlideIndex % story.moments[0].images.length) ? 'active' : ''} />
+                  ))}
+               </div>
+               <div className="story-details">
+                  <h4 className="story-title">{story.title}</h4>
+                  <span className="story-link">View Album</span>
+               </div>
+            </Link>
+          ))}
+       </div>
+    </section>
+
+    {/* MARQUEE */}
+    <section className="section insta-row">
+       <div className="marquee-container">
+          <div className="marquee-track">
+            {["/assets/IMG_6381.JPG", "/assets/IMG_6382.JPG", "/assets/IMG_6383.JPG", "/assets/IMG_6384.JPG", "/assets/IMG_6385.JPG", "/assets/IMG_6386.JPG", "/assets/IMG_6381.JPG", "/assets/IMG_6382.JPG"].map((img, i) => (
+              <div key={i} className="insta-box"><img src={img} alt="" /></div>
+            ))}
+          </div>
+       </div>
+       <div className="insta-footer"><a href="#">@auremweddings</a></div>
+    </section>
+  </main>
+)
+
+const AlbumPage = () => {
+  const { id } = useParams()
+  const album = STORIES_DATA.find(s => s.id === id)
+
+  if (!album) return <div className="error-page">Album not found.</div>
+
+  return (
+    <div className="album-page-container">
+      {/* ALBUM HERO */}
+      <section className="album-hero">
+         <div className="album-hero-img" style={{ backgroundImage: `url(${album.cover})` }}></div>
+         <div className="album-hero-content">
+            <span className="album-cat">Marriage Album</span>
+            <h1 className="album-main-title">{album.title}</h1>
+            <p className="album-intro-text">{album.description}</p>
+         </div>
+      </section>
+
+      {/* ALBUM SPREADS */}
+      <div className="album-content">
+         {album.moments.map((moment, mIdx) => (
+           <div key={mIdx} className="album-moment">
+              <div className="moment-header">
+                 <div className="moment-line"></div>
+                 <h2 className="moment-title">{moment.name}</h2>
+                 <div className="moment-line"></div>
+              </div>
+
+              <div className="album-spread">
+                 {/* Design: Spreads alternate between 2-up and large solo portraits */}
+                 {mIdx % 2 === 0 ? (
+                    <div className="spread-paired">
+                       {moment.images.map((img, i) => (
+                         <div key={i} className="album-photo-frame">
+                            <img src={img} alt="" className="album-photo" />
+                         </div>
+                       ))}
+                    </div>
+                 ) : (
+                    <div className="spread-solo">
+                       <div className="album-photo-frame large">
+                          <img src={moment.images[0]} alt="" className="album-photo" />
+                       </div>
+                    </div>
+                 )}
+              </div>
+           </div>
+         ))}
+      </div>
+
+      {/* ALBUM FOOTER */}
+      <section className="album-navigation">
+         <Link to="/#stories" className="back-link">Back to Collections</Link>
+         <div className="next-album-cta">
+            <span>Next Story</span>
+            <Link to={`/album/${STORIES_DATA[(STORIES_DATA.indexOf(album) + 1) % STORIES_DATA.length].id}`} className="next-title">
+               {STORIES_DATA[(STORIES_DATA.indexOf(album) + 1) % STORIES_DATA.length].title}
+            </Link>
+         </div>
+      </section>
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════
+// MAIN APP COMPONENT
+// ═══════════════════════════════════════════
+
 function App() {
   const [scrolled, setScrolled] = useState(false)
-
-  const portfolioItems = [
-    {
-      id: 1,
-      src: "https://instagram.fcok11-1.fna.fbcdn.net/v/t51.82787-15/656112131_18033573989618595_2362181092256567325_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=110&ig_cache_key=Mzg2MDc4OTUwNjI0OTc5OTg5OA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjE0NDB4MTc5OS5zZHIuQzMifQ%3D%3D&_nc_ohc=qE10xGFyONoQ7kNvwFAO-kP&_nc_oc=AdqW-J40fJhsqBtIxr8lvDtdG8w9k_GHvgz5FWAURR4dLu86aVoTKW7dbWBwJldlF1E&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.fcok11-1.fna&_nc_gid=go5auNfNPaXjuLfoBpqyKA&_nc_ss=7a32e&oh=00_AfxaacrBPF90okpaBDVbm0g9CrFIuA5nitG93cPU8d-u5Q&oe=69D116C9",
-      category: "Celebration",
-      title: "Soulful Union"
-    },
-    {
-      id: 2,
-      src: "https://instagram.fcok11-1.fna.fbcdn.net/v/t51.82787-15/656278097_18033455249618595_1069653530288292807_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=111&ig_cache_key=Mzg2MDQyMjg1NDA0MzYxNTQ2Nw%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjE0NDB4MTgwMC5zZHIuQzMifQ%3D%3D&_nc_ohc=NWh3gswHKOIQ7kNvwErVPmV&_nc_oc=AdozzaWdCgRyfBzwtY_x-R7IG8Txp8B3aVt4u5fW3tovA7yKN5Phj96kpYE0B4Ea45o&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.fcok11-1.fna&_nc_gid=go5auNfNPaXjuLfoBpqyKA&_nc_ss=7a32e&oh=00_AfzpTR1aj30PC2iHCHadJRH-PsPssaqfp6e_hjDK3U3ikQ&oe=69D12AC2",
-      category: "Portrait",
-      title: "The Gilded Hour"
-    },
-    {
-      id: 3,
-      src: "https://instagram.fcok11-1.fna.fbcdn.net/v/t51.82787-15/658026969_18033341207618595_8327275794520394152_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=102&ig_cache_key=Mzg2MDA0NzUwNjk1MjU0ODU1OA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjE0NDB4MTgwMC5zZHIuQzMifQ%3D%3D&_nc_ohc=J65JZ1nQcBsQ7kNvwF0yoml&_nc_oc=AdphTj1Zm51pvZYqCfOIXOBv6IGAxohN4l97nwBpx3n82-WLZ268L8fMueUlS30bj_c&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.fcok11-1.fna&_nc_gid=go5auNfNPaXjuLfoBpqyKA&_nc_ss=7a32e&oh=00_AfyGKV3Nc8i-EnIJhTg71W8dItYGTTJww-zUexUCVluXPQ&oe=69D1436C",
-      category: "Cinematic",
-      title: "Timeless Ties"
-    },
-    {
-      id: 4,
-      src: "https://instagram.fcok11-1.fna.fbcdn.net/v/t51.82787-15/656238254_18033330251618595_385906814367038031_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=107&ig_cache_key=Mzg2MDAyIzAxNjQ4Njk5MDgwMA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjE0NDB4MTgwMC5zZHIuQzMifQ%3D%3D&_nc_ohc=Oor8cRo7pJMQ7kNvwHj1vo3&_nc_oc=AdpewVqYgL-BhBN7BGdh8MdQ1N9-sY3HV4WjqFQSNkgAkO5_mWk4XpAOa6q8wOFMfgk&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.fcok11-1.fna&_nc_gid=go5auNfNPaXjuLfoBpqyKA&_nc_ss=7a32e&oh=00_Afy8B5i82nodAMZShOqGsA1SzEqg-Jm6ycHmqQb8VzfCkg&oe=69D11DA4",
-      category: "Emotion",
-      title: "Silent Promises"
-    },
-    {
-      id: 5,
-      src: "https://instagram.fcok11-1.fna.fbcdn.net/v/t51.82787-15/641216428_18028688480618595_1205730862304373334_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=108&ig_cache_key=Mzg0NDEwNDEwNDAwMDU0Mjc2NQ%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjE0NDB4MTgwMC5zZHIuQzMifQ%3D%3D&_nc_ohc=XU9zUDNDmwgQ7kNvwGBZjNV&_nc_oc=AdqAUBf2iRbpVcD16qCkvRw_fIZMJrRARCa6MBSIRi49Car8Q6pOwmZLcsJc5-D9I1w&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.fcok11-1.fna&_nc_gid=go5auNfNPaXjuLfoBpqyKA&_nc_ss=7a32e&oh=00_AfwoOv5Km5w--Arj8tPPWzp-5EBsxn1lJ8q3HK9h7je_gw&oe=69D135BF",
-      category: "Culture",
-      title: "Heritage Heart"
-    },
-    {
-      id: 6,
-      src: "https://instagram.fcok11-1.fna.fbcdn.net/v/t51.82787-15/639727183_18027550325618595_199660014776466710_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=103&ig_cache_key=Mzg0MTE4OTQ3MzA3Mzg0NzIzOQ%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjE0NDB4MTgwMC5zZHIuQzMifQ%3D%3D&_nc_ohc=xquDpN35ie0Q7kNvwGj7Udx&_nc_oc=AdqwCM0NHdkIPSKso9eOWeur4QDlvA1iJwkRWai8xEORyefCHTn7wQItFqZ2XWlFXG8&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.fcok11-1.fna&_nc_gid=go5auNfNPaXjuLfoBpqyKA&_nc_ss=7a32e&oh=00_AfzVgHeHSwsYIJwAHcBgV8Hsg3RIBiOjr9x__doLlXd8_A&oe=69D135F9",
-      category: "Details",
-      title: "Grace in Motion"
-    }
-  ]
+  const [activeHero, setActiveHero] = useState(0)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [storySlideIndex, setStorySlideIndex] = useState(0)
+  
+  const [galleryOpen, setGalleryOpen] = useState(false)
+  const [galleryImages, setGalleryImages] = useState([])
+  const [galleryIndex, setGalleryIndex] = useState(0)
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50)
-
-      // Parallax effect for hero
-      const heroBg = document.querySelector('.hero-bg img')
-      if (heroBg) {
-        const scrollValue = window.scrollY
-        heroBg.style.transform = `scale(${1.1 + scrollValue * 0.0005}) translateY(${scrollValue * 0.1}px)`
-      }
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible')
-          }
-        })
-      },
-      { threshold: 0.15 }
-    )
-
-    const hiddenElements = document.querySelectorAll('.reveal, .mask-reveal')
-    hiddenElements.forEach((el) => observer.observe(el))
-
+    const handleScroll = () => setScrolled(window.scrollY > 50)
+    const heroTimer = setInterval(() => setActiveHero((p) => (p + 1) % 3), 5000)
+    const storyTimer = setInterval(() => setStorySlideIndex((p) => p + 1), 4500)
     window.addEventListener('scroll', handleScroll)
     return () => {
       window.removeEventListener('scroll', handleScroll)
-      hiddenElements.forEach((el) => observer.unobserve(el))
+      clearInterval(heroTimer); clearInterval(storyTimer)
     }
   }, [])
 
+  useEffect(() => {
+    document.body.style.overflow = (menuOpen || galleryOpen) ? 'hidden' : 'unset'
+  }, [menuOpen, galleryOpen])
+
+  const toggleMenu = () => setMenuOpen(!menuOpen)
+  const openGallery = (imgs, index = 0) => { setGalleryImages(imgs); setGalleryIndex(index); setGalleryOpen(true); }
+  const closeGallery = () => setGalleryOpen(false)
+  const nextImage = (e) => { e.stopPropagation(); setGalleryIndex(p => (p + 1) % galleryImages.length); }
+  const prevImage = (e) => { e.stopPropagation(); setGalleryIndex(p => (p - 1 + galleryImages.length) % galleryImages.length); }
+
   return (
-    <div className="app">
-      {/* NAVBAR */}
-      <header className={`navbar ${scrolled ? 'scrolled' : ''}`}>
-        <div className="logo-container">
-          <a href="#home" className="logo-link">
-            <img src="/nav logo.png" alt="Aurem Logo" className="navbar-logo-img" />
-            <img src="/nav name.png" alt="Aurem Weddings" className="navbar-name-img" />
-          </a>
-        </div>
-        <nav className="nav-links">
-          <a href="#home">Home</a>
-          <a href="#about">Philosophy</a>
-          <a href="#portfolio">Narratives</a>
-          <a href="#contact">Inquire</a>
-        </nav>
-      </header>
-
-      <main>
-        {/* HERO SECTION */}
-        <section id="home" className="hero">
-          <div className="hero-bg">
-            <img src="/hero.jpg" alt="Aurem Weddings — Bonded" />
-          </div>
-          <div className="hero-overlay"></div>
-
-          <div className="hero-content reveal">
-            <img src="/logo.png" alt="Aurem Weddings Logo" className="hero-logo-img fade-in" />
-            <span className="hero-subtitle">
-              <span className="highlight-text">Directed by Emotion</span>
-              <br />
-              <span className="hero-subtitle-sub">Cinematic Legacies</span>
-            </span>
-          </div>
-
-          <div className="scroll-indicator reveal reveal-delay-2">
-            <span className="scroll-text">Scroll</span>
-            <div className="scroll-line"></div>
-          </div>
-        </section>
-
-        {/* ── DIVIDER ── */}
-        <SectionDivider />
-
-        {/* ABOUT / PHILOSOPHY SECTION */}
-        <section id="about" className="section">
-          <div className="about-grid">
-            <div className="section-header reveal">
-              <span className="section-label">
-                <span className="section-num">01</span> Our Philosophy
-              </span>
-              <h2 className="section-title">We don't record events; we craft <em>cinematic legacies</em>.</h2>
-            </div>
-            <div className="premium-box reveal reveal-delay-1">
-              <p className="about-text">
-                By blending raw, unscripted emotion with high-end, editorial aesthetics,
-                we create timeless art that speaks directly to the soul.
-                Based in major hubs—available worldwide.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* ── DIVIDER ── */}
-        <SectionDivider />
-
-        {/* PORTFOLIO SECTION */}
-        <section id="portfolio" className="section">
-          <div className="section-header reveal">
-            <span className="section-label">
-              <span className="section-num">02</span> Portfolios
-            </span>
-            <h2 className="section-title">Visual Narratives</h2>
-          </div>
-
-          <div className="portfolio-grid">
-            {portfolioItems.map((item, index) => (
-              <div
-                key={item.id}
-                className={`portfolio-item reveal reveal-delay-${(index % 3) + 1}`}
-              >
-                <div className="item-wrapper mask-reveal">
-                  <img src={item.src} alt={item.title} loading="lazy" />
-                </div>
-                <div className="item-info">
-                  <span className="item-category">{item.category}</span>
-                  <h3 className="item-title">{item.title}</h3>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ── DIVIDER ── */}
-        <SectionDivider />
-      </main>
-
-      {/* FOOTER / INQUIRE */}
-      <footer id="contact" className="footer">
-        <div className="footer-cta-card reveal">
-          <span className="section-label">
-            <span className="section-num">03</span> Inquire
-          </span>
-          <h2>Let's Create<br /><em>Something Magic</em></h2>
-          <p className="footer-cta-desc">
-            Currently accepting limited bookings for 2025 & 2026.
-            Each bespoke film is curated with obsessive attention to detail.
-          </p>
-          <a href="mailto:hello@auremweddings.com" className="btn-premium">Inquire Now</a>
-        </div>
-
-        <div className="footer-bottom reveal reveal-delay-2">
-          <p>&copy; {new Date().getFullYear()} Aurem Weddings. All Rights Reserved.</p>
-          <div className="social-links">
-            <a href="https://www.instagram.com/auremweddings" target="_blank" rel="noopener noreferrer">Instagram</a>
-            <a href="#">Vimeo</a>
-            <a href="#">Pinterest</a>
+    <BrowserRouter>
+      <ScrollToTop />
+      <div className={`app ${menuOpen ? 'menu-active' : ''}`}>
+        <Navbar scrolled={scrolled} menuOpen={menuOpen} toggleMenu={toggleMenu} />
+        
+        {/* MENU OVERLAY */}
+        <div className={`menu-overlay ${menuOpen ? 'open' : ''}`}>
+          <button className="menu-close" onClick={toggleMenu}><div className="close-icon"></div><span>CLOSE</span></button>
+          <div className="menu-content">
+            <nav className="menu-nav">
+               <Link to="/" onClick={toggleMenu} style={{"--i": 1}}>Home</Link>
+               <Link to="/#about" onClick={toggleMenu} style={{"--i": 2}}>Philosophy</Link>
+               <Link to="/#stories" onClick={toggleMenu} style={{"--i": 3}}>Stories</Link>
+               <Link to="/#films" onClick={toggleMenu} style={{"--i": 4}}>Films</Link>
+               <Link to="/#contact" onClick={toggleMenu} style={{"--i": 5}}>Inquire</Link>
+            </nav>
           </div>
         </div>
-      </footer>
-    </div>
+
+        <Lightbox open={galleryOpen} images={galleryImages} index={galleryIndex} close={closeGallery} next={nextImage} prev={prevImage} />
+
+        <Routes>
+          <Route path="/" element={<HomePage activeHero={activeHero} storySlideIndex={storySlideIndex} openGallery={openGallery} />} />
+          <Route path="/album/:id" element={<AlbumPage />} />
+        </Routes>
+
+        <Footer />
+      </div>
+    </BrowserRouter>
   )
 }
 
