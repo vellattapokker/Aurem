@@ -107,23 +107,49 @@ const Navbar = ({ scrolled, menuOpen, toggleMenu }) => (
 
 const Footer = () => (
   <footer id="contact" className="footer">
-     <div className="footer-stack">
-        <div className="footer-socials">
-           <a href="https://www.instagram.com/auremweddings" target="_blank" rel="noopener noreferrer">Instagram</a>
+     {/* Typographic Watermark */}
+     <div className="footer-watermark">AUREM</div>
+
+     <div className="footer-container">
+        <div className="footer-grid">
+           {/* Navigation */}
+           <div className="footer-col">
+              <span className="col-label">Navigation</span>
+              <nav className="footer-links">
+                 <Link to="/">Home</Link>
+                 <Link to="/#about">Philosophy</Link>
+                 <Link to="/#stories">Stories</Link>
+                 <Link to="/#films">Films</Link>
+              </nav>
+           </div>
+
+           {/* Studio Context */}
+           <div className="footer-col">
+              <span className="col-label">Studio</span>
+              <div className="footer-context">
+                 <p>Based in Ernakulam, Kerala</p>
+                 <p>Available for unions worldwide.</p>
+              </div>
+           </div>
+
+           {/* Connect & Inquiry */}
+           <div className="footer-col">
+              <span className="col-label">Connect</span>
+              <div className="footer-actions">
+                 <a href="https://www.instagram.com/auremweddings" target="_blank" rel="noopener noreferrer">Instagram</a>
+                 <a href="mailto:hello@aurem.in" className="cta-inquiry">Book a Consultation</a>
+              </div>
+           </div>
         </div>
-        <nav className="footer-nav">
-           <Link to="/">Home</Link>
-           <Link to="/#about">Philosophy</Link>
-           <Link to="/#stories">Stories</Link>
-           <Link to="/#films">Films</Link>
-        </nav>
-        <div className="footer-copyright">
-           <p>Based in Ernakulam, Kerala</p>
-           <p>All content Copyright &copy; {new Date().getFullYear()} Aurem Weddings</p>
+
+        <div className="footer-bottom">
+           <div className="footer-copyright">
+              <p>&copy; {new Date().getFullYear()} Aurem Weddings. Directed by Emotion.</p>
+           </div>
+           <button className="back-to-top-circle" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+              <span className="arrow">&uarr;</span>
+           </button>
         </div>
-        <button className="back-to-top" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
-           <span className="arrow">&uarr;</span>
-        </button>
      </div>
   </footer>
 )
