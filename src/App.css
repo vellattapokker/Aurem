@@ -797,32 +797,6 @@
     font-size: 0.95rem;
     line-height: 1.5;
   }
-
-  .portfolio-grid {
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-
-  .portfolio-item,
-  .portfolio-item:nth-child(n) {
-    margin-bottom: 4rem;
-  }
-
-  .footer {
-    padding: 2rem 5% 1.5rem;
-  }
-
-  .footer-cta-card {
-    padding: 1.5rem 1rem;
-  }
-
-  .footer-cta-card h2 {
-    font-size: 1.6rem;
-  }
-
-  .footer-cta-desc {
-    font-size: 0.75rem;
-  }
 }
 /* -------------------------------------------
    LIGHTBOX GALLERY
@@ -1358,4 +1332,3 @@ button.story-link, button.link-arrow {
  text-align: center;
  }
 }
-
