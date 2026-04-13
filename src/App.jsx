@@ -35,9 +35,6 @@ const Navbar = ({ scrolled, menuOpen, toggleMenu }) => (
   <header className={`navbar ${scrolled ? 'scrolled' : ''} ${menuOpen ? 'hidden' : ''}`}>
     <nav className="nav-container">
       <div className="nav-group left">
-        <Link to="/#about">About</Link>
-        <Link to="/#stories">Stories</Link>
-        <Link to="/#gallery">Archive</Link>
       </div>
       
       <Link to="/" className="logo-link">
@@ -46,7 +43,6 @@ const Navbar = ({ scrolled, menuOpen, toggleMenu }) => (
       </Link>
       
       <div className="nav-group right">
-        <Link to="/#films">Films</Link>
         <button className="menu-toggle" onClick={toggleMenu}>
           <div className="burger">
             <div className="line"></div>

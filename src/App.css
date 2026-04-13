@@ -251,7 +251,7 @@
 
 .menu-nav-col {
   border-right: 1px solid rgba(0, 0, 0, 0.05);
-  height: 70vh;
+  height: 80vh;
   display: flex;
   align-items: center;
 }
@@ -264,7 +264,7 @@
 
 .menu-nav a {
   font-family: var(--font-heading);
-  font-size: clamp(3.5rem, 7vw, 7rem);
+  font-size: clamp(2.5rem, 4.5vw, 5rem);
   text-transform: none;
   letter-spacing: -0.02em;
   line-height: 1.1;
@@ -288,7 +288,7 @@
 /* Detail Column */
 .menu-detail-col {
   padding-left: 15%;
-  height: 70vh;
+  height: 80vh;
   display: flex;
   align-items: center;
 }
