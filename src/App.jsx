@@ -17,8 +17,17 @@ const INITIAL_DATA = {
 // ═══════════════════════════════════════════
 
 const ScrollToTop = () => {
-  const { pathname } = useLocation();
-  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  const { pathname, hash } = useLocation();
+  useEffect(() => { 
+    if (hash) {
+      setTimeout(() => {
+        const element = document.getElementById(hash.replace('#', ''));
+        if (element) element.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      window.scrollTo(0, 0); 
+    }
+  }, [pathname, hash]);
   return null;
 }
 
