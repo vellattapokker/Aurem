@@ -19,7 +19,7 @@
 
 .navbar.scrolled {
   padding: 1.5rem 5%;
-  background-color: rgba(254, 254, 227, 0.8);
+  background-color: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.03);
@@ -195,7 +195,7 @@
   left: 0;
   width: 100%;
   height: 100vh;
-  background-color: #fefee3; /* Match brand cream */
+  background-color: #ffffff; /* Match white background */
   z-index: 200;
   opacity: 0;
   visibility: hidden;
@@ -436,7 +436,7 @@
 }
 
 .hero-slide.active {
-  opacity: 0.7;
+  opacity: 1;
   transform: scale(1);
 }
 
@@ -446,7 +446,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.45); /* Darker overlay for text pop */
+  background: rgba(0, 0, 0, 0.3); /* Slightly lighter for better image clarity */
   z-index: 1;
 }
 
@@ -478,7 +478,7 @@
    EDITORIAL INTRO
    ═══════════════════════════════════════════ */
 .section {
-  padding: var(--spacing-xl) 5%;
+  padding: var(--spacing-lg) 5%;
 }
 
 .container-sm {
@@ -601,7 +601,28 @@
 .stories-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 3.5rem 2.5rem;
+  gap: 2rem;
+}
+
+/* Center the 4th item on Desktop (3-column layout) */
+@media (min-width: 1024px) {
+  .stories-grid > *:nth-child(4) {
+    grid-column: 2;
+  }
+}
+
+/* Tablet: 2 columns */
+@media (max-width: 1023px) {
+  .stories-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile: 1 column */
+@media (max-width: 600px) {
+  .stories-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .story-card {
