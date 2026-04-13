@@ -654,6 +654,7 @@
   font-size: 1.4rem;
   font-style: italic;
   margin-bottom: 0.5rem;
+  text-transform: none;
 }
 
 .story-link {
