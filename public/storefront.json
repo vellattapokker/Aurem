@@ -1,0 +1,81 @@
+{
+  "hero": [
+    "/assets/IMG_0213.JPG",
+    "/assets/IMG_7152.JPG",
+    "/assets/IMG_6219.JPEG"
+  ],
+  "films": [
+    {
+      "id": 1,
+      "title": "The Golden Hour",
+      "category": "Cinematic Film",
+      "src": "/assets/IMG_6219.JPEG",
+      "desc": "An epic narrative of love and legacy, crafted with a cinematic eye for detail and emotion."
+    },
+    {
+      "id": 2,
+      "title": "Soulful Whispers",
+      "category": "Highlights Film",
+      "src": "/assets/IMG_6213.JPEG",
+      "desc": "Capturing the unspoken moments and raw energy that make every union unique and timeless."
+    }
+  ],
+  "stories": [
+    {
+      "id": "modern-noir",
+      "title": "Selection 01: Modern Noir",
+      "cover": "/assets/IMG_5853.JPG",
+      "description": "A high-fashion narrative set against the golden pulse of the night city.",
+      "moments": [
+        { "name": "The Evening Pulse", "images": ["/assets/IMG_5853.JPG", "/assets/IMG_5849.JPG"] },
+        { "name": "City Shadows", "images": ["/assets/IMG_5850.JPG", "/assets/IMG_6254.JPG"] },
+        { "name": "Noir Reflections", "images": ["/assets/IMG_6263.JPG", "/assets/IMG_6464.JPG"] }
+      ]
+    },
+    {
+      "id": "moody-monochrome",
+      "title": "Selection 02: Moody Monochrome",
+      "cover": "/assets/IMG_7212.JPEG",
+      "description": "A dramatic, high-contrast exploration of raw emotion and timeless silence.",
+      "moments": [
+        { "name": "The Sacred Space", "images": ["/assets/IMG_7212.JPEG", "/assets/IMG_7213.JPEG"] },
+        { "name": "Silent Echoes", "images": ["/assets/IMG_7215.JPEG", "/assets/IMG_7216.JPEG"] },
+        { "name": "Timeless Frames", "images": ["/assets/IMG_7217.JPEG", "/assets/IMG_7221.JPEG"] }
+      ]
+    },
+    {
+      "id": "ethereal-light",
+      "title": "Selection 03: Ethereal Light",
+      "cover": "/assets/IMG_7146.JPG",
+      "description": "Soft pastel morning light and romantic fine-art aesthetics.",
+      "moments": [
+        { "name": "The Morning Glow", "images": ["/assets/IMG_7146.JPG", "/assets/IMG_7150.JPG"] },
+        { "name": "Soft Whispers", "images": ["/assets/IMG_7154.JPG", "/assets/IMG_7159.JPG"] },
+        { "name": "Coastal Haze", "images": ["/assets/IMG_7160.JPG", "/assets/IMG_7161.JPG"] }
+      ]
+    },
+    {
+      "id": "malabar-union",
+      "title": "Selection 04: The Malabar Union",
+      "cover": "/assets/IMG_6373.JPG",
+      "description": "A cinematic documentary of a traditional union, told with warmth and soul.",
+      "moments": [
+        { "name": "The Rituals", "images": ["/assets/IMG_6373.JPG", "/assets/IMG_6374.JPG"] },
+        { "name": "The Union", "images": ["/assets/IMG_6375.JPG", "/assets/IMG_6376.JPG"] },
+        { "name": "Heritage", "images": ["/assets/IMG_6377.JPG", "/assets/IMG_6378.JPG"] }
+      ]
+    }
+  ],
+  "gallery": [
+    "/assets/IMG_0209.JPG",
+    "/assets/IMG_0210.JPG",
+    "/assets/IMG_0211.JPG",
+    "/assets/IMG_0212.JPG",
+    "/assets/IMG_0213.JPG",
+    "/assets/IMG_0214.JPG",
+    "/assets/IMG_7162.JPG",
+    "/assets/IMG_7163.JPG",
+    "/assets/IMG_7164.JPG",
+    "/assets/IMG_7166.JPG"
+  ]
+}

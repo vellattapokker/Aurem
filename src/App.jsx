@@ -3,71 +3,14 @@ import { BrowserRouter, Routes, Route, Link, useParams, useLocation } from 'reac
 import './App.css'
 
 // ═══════════════════════════════════════════
-// DATA DEFINITIONS
+// INITIAL PLACEHOLDER DATA
 // ═══════════════════════════════════════════
-const STORIES_DATA = [
-  { 
-    id: "modern-noir", 
-    title: "Selection 01: Modern Noir", 
-    cover: "/assets/IMG_5853.JPG",
-    description: "A high-fashion narrative set against the golden pulse of the night city.",
-    moments: [
-      { name: "The Evening Pulse", images: ["/assets/IMG_5853.JPG", "/assets/IMG_5849.JPG"] },
-      { name: "City Shadows", images: ["/assets/IMG_5850.JPG", "/assets/IMG_6254.JPG"] },
-      { name: "Noir Reflections", images: ["/assets/IMG_6263.JPG", "/assets/IMG_6464.JPG"] }
-    ]
-  },
-  { 
-    id: "moody-monochrome", 
-    title: "Selection 02: Moody Monochrome", 
-    cover: "/assets/IMG_7212.JPEG",
-    description: "A dramatic, high-contrast exploration of raw emotion and timeless silence.",
-    moments: [
-      { name: "The Sacred Space", images: ["/assets/IMG_7212.JPEG", "/assets/IMG_7213.JPEG"] },
-      { name: "Silent Echoes", images: ["/assets/IMG_7215.JPEG", "/assets/IMG_7216.JPEG"] },
-      { name: "Timeless Frames", images: ["/assets/IMG_7217.JPEG", "/assets/IMG_7221.JPEG"] }
-    ]
-  },
-  { 
-    id: "ethereal-light", 
-    title: "Selection 03: Ethereal Light", 
-    cover: "/assets/IMG_7146.JPG",
-    description: "Soft pastel morning light and romantic fine-art aesthetics.",
-    moments: [
-      { name: "The Morning Glow", images: ["/assets/IMG_7146.JPG", "/assets/IMG_7150.JPG"] },
-      { name: "Soft Whispers", images: ["/assets/IMG_7154.JPG", "/assets/IMG_7159.JPG"] },
-      { name: "Coastal Haze", images: ["/assets/IMG_7160.JPG", "/assets/IMG_7161.JPG"] }
-    ]
-  },
-  { 
-    id: "malabar-union", 
-    title: "Selection 04: The Malabar Union", 
-    cover: "/assets/IMG_6373.JPG",
-    description: "A cinematic documentary of a traditional union, told with warmth and soul.",
-    moments: [
-      { name: "The Rituals", images: ["/assets/IMG_6373.JPG", "/assets/IMG_6374.JPG"] },
-      { name: "The Union", images: ["/assets/IMG_6375.JPG", "/assets/IMG_6376.JPG"] },
-      { name: "Heritage", images: ["/assets/IMG_6377.JPG", "/assets/IMG_6378.JPG"] }
-    ]
-  }
-]
-
-const FEATURED_FILMS = [
-  {
-    id: 1,
-    title: "The Golden Hour",
-    category: "Cinematic Film",
-    src: "/assets/IMG_6219.JPEG",
-    desc: "An epic narrative of love and legacy, crafted with a cinematic eye for detail and emotion."
-  },
-  {
-    id: 2,
-    title: "Soulful Whispers",
-    category: "Highlights Film",
-    src: "/assets/IMG_6213.JPEG",
-    desc: "Capturing the unspoken moments and raw energy that make every union unique and timeless."
-  }
-]
+const INITIAL_DATA = {
+  hero: ["/assets/IMG_0213.JPG"],
+  films: [],
+  stories: [],
+  gallery: []
+};
 
 // ═══════════════════════════════════════════
 // SHARED COMPONENTS
@@ -85,6 +28,7 @@ const Navbar = ({ scrolled, menuOpen, toggleMenu }) => (
       <div className="nav-group left">
         <Link to="/#about">About</Link>
         <Link to="/#stories">Stories</Link>
+        <Link to="/#gallery">Archive</Link>
       </div>
       
       <Link to="/" className="logo-link">
@@ -119,6 +63,7 @@ const Footer = () => (
                  <Link to="/">Home</Link>
                  <Link to="/#about">Philosophy</Link>
                  <Link to="/#stories">Stories</Link>
+                 <Link to="/#gallery">Archive</Link>
                  <Link to="/#films">Films</Link>
               </nav>
            </div>
@@ -176,12 +121,31 @@ const Lightbox = ({ open, images, index, close, next, prev }) => (
 // PAGE COMPONENTS
 // ═══════════════════════════════════════════
 
-const HomePage = ({ activeHero, storySlideIndex, openGallery }) => (
+const Gallery = ({ images, openGallery }) => (
+  <section id="gallery" className="section gallery-section">
+     <div className="section-header">
+        <span className="label">The Archive</span>
+        <h2 className="title">Captured Moments</h2>
+     </div>
+     <div className="gallery-grid">
+        {images.map((img, i) => (
+          <div key={i} className="gallery-item" onClick={() => openGallery(images, i)}>
+            <img src={img} alt={`Gallery ${i}`} loading="lazy" />
+            <div className="gallery-overlay">
+               <span className="view-text">View Image</span>
+            </div>
+          </div>
+        ))}
+     </div>
+  </section>
+)
+
+const HomePage = ({ data, activeHero, storySlideIndex, openGallery }) => (
   <main>
     {/* HERO */}
     <section id="home" className="hero-container">
       <div className="hero-slider">
-        {["/assets/IMG_0213.JPG", "/assets/IMG_7152.JPG", "/assets/IMG_6219.JPEG"].map((img, i) => (
+        {(data.hero || INITIAL_HERO).map((img, i) => (
           <div key={i} className={`hero-slide ${i === activeHero ? 'active' : ''}`} style={{ backgroundImage: `url(${img})` }}></div>
         ))}
         <div className="hero-overlay"></div>
@@ -210,7 +174,7 @@ const HomePage = ({ activeHero, storySlideIndex, openGallery }) => (
           <h2 className="title">The Films</h2>
        </div>
        <div className="films-grid">
-          {FEATURED_FILMS.map((film, index) => (
+          {(data.films || INITIAL_FILMS).map((film, index) => (
             <div key={film.id} className={`film-row ${index % 2 !== 0 ? 'reverse' : ''}`}>
                <div className="film-media story-img-wrap" onClick={() => openGallery([film.src])}>
                   <img src={film.src} alt={film.title} className="active" />
@@ -234,7 +198,7 @@ const HomePage = ({ activeHero, storySlideIndex, openGallery }) => (
           <h2 className="title">Every Photo Tells a Story</h2>
        </div>
        <div className="stories-grid">
-          {STORIES_DATA.map(story => (
+          {(data.stories || INITIAL_STORIES).map(story => (
             <Link to={`/album/${story.id}`} key={story.id} className="story-card">
                <div className="story-img-wrap">
                   {story.moments[0].images.map((img, idx) => (
@@ -250,6 +214,9 @@ const HomePage = ({ activeHero, storySlideIndex, openGallery }) => (
        </div>
     </section>
 
+    {/* GALLERY */}
+    <Gallery images={data.gallery || INITIAL_GALLERY} openGallery={openGallery} />
+
     {/* MARQUEE */}
     <section className="section insta-row">
        <div className="marquee-container">
@@ -264,11 +231,11 @@ const HomePage = ({ activeHero, storySlideIndex, openGallery }) => (
   </main>
 )
 
-const AlbumPage = () => {
+const AlbumPage = ({ stories }) => {
   const { id } = useParams()
-  const album = STORIES_DATA.find(s => s.id === id)
+  const album = (stories || []).find(s => s.id === id)
 
-  if (!album) return <div className="error-page">Album not found.</div>
+  if (!album) return <div className="error-page" style={{padding: '20vh 5%', textAlign: 'center'}}>Album not found.</div>
 
   return (
     <div className="album-page-container">
@@ -319,8 +286,8 @@ const AlbumPage = () => {
          <Link to="/#stories" className="back-link">Back to Collections</Link>
          <div className="next-album-cta">
             <span>Next Story</span>
-            <Link to={`/album/${STORIES_DATA[(STORIES_DATA.indexOf(album) + 1) % STORIES_DATA.length].id}`} className="next-title">
-               {STORIES_DATA[(STORIES_DATA.indexOf(album) + 1) % STORIES_DATA.length].title}
+            <Link to={`/album/${stories[(stories.indexOf(album) + 1) % stories.length].id}`} className="next-title">
+               {stories[(stories.indexOf(album) + 1) % stories.length].title}
             </Link>
          </div>
       </section>
@@ -331,7 +298,6 @@ const AlbumPage = () => {
 // ═══════════════════════════════════════════
 // MAIN APP COMPONENT
 // ═══════════════════════════════════════════
-
 function App() {
   const [scrolled, setScrolled] = useState(false)
   const [activeHero, setActiveHero] = useState(0)
@@ -343,16 +309,32 @@ function App() {
   const [galleryImages, setGalleryImages] = useState([])
   const [galleryIndex, setGalleryIndex] = useState(0)
 
+  const [siteData, setSiteData] = useState(INITIAL_DATA)
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50)
-    const heroTimer = setInterval(() => setActiveHero((p) => (p + 1) % 3), 5000)
-    const storyTimer = setInterval(() => setStorySlideIndex((p) => p + 1), 4500)
     window.addEventListener('scroll', handleScroll)
+    
+    // Fetch Dynamic Content
+    fetch('/storefront.json')
+      .then(res => res.json())
+      .then(json => setSiteData(json))
+      .catch(err => console.error("Error loading storefront data:", err))
+
+    const storyTimer = setInterval(() => setStorySlideIndex((p) => p + 1), 4500)
+    
     return () => {
       window.removeEventListener('scroll', handleScroll)
-      clearInterval(heroTimer); clearInterval(storyTimer)
+      clearInterval(storyTimer)
     }
   }, [])
+
+  // Dynamic Hero Timer
+  useEffect(() => {
+    const heroCount = siteData.hero?.length || 1;
+    const heroTimer = setInterval(() => setActiveHero((p) => (p + 1) % heroCount), 5000);
+    return () => clearInterval(heroTimer);
+  }, [siteData.hero])
 
   useEffect(() => {
     document.body.style.overflow = (menuOpen || galleryOpen) ? 'hidden' : 'unset'
@@ -368,6 +350,7 @@ function App() {
     "Home": "/assets/IMG_0213.JPG",
     "Philosophy": "/assets/IMG_7152.JPG",
     "Stories": "/assets/IMG_5853.JPG",
+    "Archive": "/assets/IMG_7162.JPG",
     "Films": "/assets/IMG_6219.JPEG",
     "Inquire": "/assets/IMG_6381.JPG"
   }
@@ -400,6 +383,7 @@ function App() {
                    let target = "/";
                    if (name === "Philosophy") target = "/#about";
                    else if (name === "Stories") target = "/#stories";
+                   else if (name === "Archive") target = "/#gallery";
                    else if (name === "Films") target = "/#films";
                    else if (name === "Inquire") target = "/#contact";
 
@@ -441,8 +425,8 @@ function App() {
         <Lightbox open={galleryOpen} images={galleryImages} index={galleryIndex} close={closeGallery} next={nextImage} prev={prevImage} />
 
         <Routes>
-          <Route path="/" element={<HomePage activeHero={activeHero} storySlideIndex={storySlideIndex} openGallery={openGallery} />} />
-          <Route path="/album/:id" element={<AlbumPage />} />
+          <Route path="/" element={<HomePage data={siteData} activeHero={activeHero} storySlideIndex={storySlideIndex} openGallery={openGallery} />} />
+          <Route path="/album/:id" element={<AlbumPage stories={siteData.stories} />} />
         </Routes>
 
         <Footer />
