@@ -137,7 +137,7 @@ const Footer = () => (
               <span className="col-label">Connect</span>
               <div className="footer-actions">
                  <a href="https://www.instagram.com/auremweddings" target="_blank" rel="noopener noreferrer">Instagram</a>
-                 <a href="mailto:hello@aurem.in" className="cta-inquiry">Book a Consultation</a>
+                 <a href="mailto:auremweddings@gmail.com" className="cta-inquiry">Book a Consultation</a>
               </div>
            </div>
         </div>
