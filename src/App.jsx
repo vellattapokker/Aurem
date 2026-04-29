@@ -155,104 +155,7 @@ const Gallery = ({ images, openGallery }) => (
   </section>
 )
 
-const HighlightVideo = () => {
-  const containerRef = useRef(null);
-  const wrapperRef = useRef(null);
-  const playerRef = useRef(null);
 
-  useEffect(() => {
-    // 1. Load the YouTube IFrame API script
-    if (!window.YT) {
-      const tag = document.createElement('script');
-      tag.src = "https://www.youtube.com/iframe_api";
-      const firstScriptTag = document.getElementsByTagName('script')[0];
-      if (firstScriptTag && firstScriptTag.parentNode) {
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-      } else {
-        document.head.appendChild(tag);
-      }
-    }
-
-    // 2. Initialize the player once API is ready
-    const initPlayer = () => {
-      if (!containerRef.current) return;
-      
-      playerRef.current = new window.YT.Player(containerRef.current, {
-        videoId: 'b68HETiNO98',
-        width: '100%',
-        height: '100%',
-        playerVars: {
-          'autoplay': 0, // We control playback manually via API
-          'rel': 0,
-          'modestbranding': 1,
-          'vq': 'hd1080',
-          'enablejsapi': 1
-        },
-        events: {
-          'onReady': (event) => {
-            event.target.setPlaybackQuality('hd1080');
-
-            // Setup IntersectionObserver when player is ready
-            const observer = new IntersectionObserver(
-              ([entry]) => {
-                if (entry.isIntersecting) {
-                  // Try to play when in view
-                  event.target.setPlaybackQuality('hd1080');
-                  event.target.playVideo();
-                } else {
-                  // Pause when out of view
-                  event.target.pauseVideo();
-                }
-              },
-              { threshold: 0.3 }
-            );
-            
-            if (wrapperRef.current) {
-              observer.observe(wrapperRef.current);
-              playerRef.current._observer = observer;
-            }
-          },
-          'onStateChange': (event) => {
-            // Force high quality again when it starts playing
-            if (event.data === window.YT.PlayerState.PLAYING) {
-              event.target.setPlaybackQuality('hd1080');
-            }
-          }
-        }
-      });
-    };
-
-    // If API is already ready (e.g. fast refresh), init immediately
-    if (window.YT && window.YT.Player) {
-      initPlayer();
-    } else {
-      // Otherwise queue the initialization
-      const previousCallback = window.onYouTubeIframeAPIReady;
-      window.onYouTubeIframeAPIReady = () => {
-        if (previousCallback) previousCallback();
-        initPlayer();
-      };
-    }
-
-    // Cleanup on unmount
-    return () => {
-      if (playerRef.current) {
-        if (playerRef.current._observer) {
-          playerRef.current._observer.disconnect();
-        }
-        playerRef.current.destroy();
-      }
-    };
-  }, []);
-
-  return (
-    <section className="highlight-video-section">
-       <div ref={wrapperRef} className="highlight-video-wrapper">
-          <div ref={containerRef}></div>
-       </div>
-    </section>
-  );
-};
 
 const HomePage = ({ data, activeHero, storySlideIndex, openGallery }) => (
   <main>
@@ -282,9 +185,6 @@ const HomePage = ({ data, activeHero, storySlideIndex, openGallery }) => (
          </div>
       </div>
     </section>
-
-    {/* HIGHLIGHT VIDEO */}
-    <HighlightVideo />
 
     {/* FILMS */}
     <section id="films" className="section films-section">
