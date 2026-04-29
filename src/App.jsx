@@ -140,7 +140,7 @@ const Gallery = ({ images, openGallery }) => (
           
           return (
             <div key={i} className="gallery-item" onClick={() => openGallery(images, i)}>
-              <img src={img} alt={`Gallery ${i}`} loading="lazy" />
+              <img src={img} alt={`Gallery ${i}`} loading="eager" />
               <div className={`gallery-overlay ${isLastVisible && hasMore ? 'has-more' : ''}`}>
                  {isLastVisible && hasMore ? (
                    <span className="more-text">+{remaining}</span>
@@ -164,7 +164,7 @@ const HomePage = ({ data, activeHero, storySlideIndex, openGallery }) => (
       <div className="hero-slider">
         {(data.hero || INITIAL_HERO).map((img, i) => (
           <div key={i} className={`hero-slide ${i === activeHero ? 'active' : ''}`}>
-             <img src={img} alt="Hero Background" fetchpriority={i === 0 ? "high" : "auto"} loading={i === 0 ? "eager" : "lazy"} className="hero-slide-img" />
+             <img src={img} alt="Hero Background" fetchpriority={i === 0 ? "high" : "auto"} loading="eager" className="hero-slide-img" />
           </div>
         ))}
         <div className="hero-overlay"></div>
@@ -337,7 +337,36 @@ function App() {
     // Fetch Dynamic Content
     fetch('/storefront.json')
       .then(res => res.json())
-      .then(json => setSiteData(json))
+      .then(json => {
+        setSiteData(json);
+        
+        // Aggressive Preloading: Store all images in browser memory cache
+        // to prevent white flashes when scrolling quickly back to top
+        const imagesToCache = [
+          ...(json.hero || []),
+          ...(json.films || []).map(f => f.src),
+          ...(json.gallery || [])
+        ];
+        
+        // Include story images
+        if (json.stories) {
+          json.stories.forEach(story => {
+             if (story.moments) {
+               story.moments.forEach(m => {
+                 if (m.images) imagesToCache.push(...m.images);
+               });
+             }
+          });
+        }
+
+        // Force browser to fetch and keep them in memory
+        imagesToCache.forEach(src => {
+          if (src) {
+            const img = new Image();
+            img.src = src;
+          }
+        });
+      })
       .catch(err => console.error("Error loading storefront data:", err))
 
     const storyTimer = setInterval(() => setStorySlideIndex((p) => p + 1), 4500)
