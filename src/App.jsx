@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { BrowserRouter, Routes, Route, Link, useParams, useLocation } from 'react-router-dom'
 import './App.css'
 
@@ -132,18 +132,66 @@ const Gallery = ({ images, openGallery }) => (
         <span className="label">The Archive</span>
         <h2 className="title">Captured Moments</h2>
      </div>
-     <div className="gallery-grid">
-        {images.map((img, i) => (
-          <div key={i} className="gallery-item" onClick={() => openGallery(images, i)}>
-            <img src={img} alt={`Gallery ${i}`} loading="lazy" />
-            <div className="gallery-overlay">
-               <span className="view-text">View Image</span>
+     <div className="balanced-gallery-grid">
+        {images.slice(0, 5).map((img, i) => {
+          const isLastVisible = i === 4;
+          const hasMore = images.length > 5;
+          const remaining = images.length - 5;
+          
+          return (
+            <div key={i} className="gallery-item" onClick={() => openGallery(images, i)}>
+              <img src={img} alt={`Gallery ${i}`} loading="lazy" />
+              <div className={`gallery-overlay ${isLastVisible && hasMore ? 'has-more' : ''}`}>
+                 {isLastVisible && hasMore ? (
+                   <span className="more-text">+{remaining}</span>
+                 ) : (
+                   <span className="view-text">View Image</span>
+                 )}
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
      </div>
   </section>
 )
+
+const HighlightVideo = () => {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          videoRef.current?.play().catch(e => console.log("Autoplay prevented:", e));
+        } else {
+          videoRef.current?.pause();
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    if (videoRef.current) observer.observe(videoRef.current);
+
+    return () => {
+      if (videoRef.current) observer.unobserve(videoRef.current);
+    };
+  }, []);
+
+  return (
+    <section className="highlight-video-section">
+       <div className="highlight-video-wrapper">
+          <video 
+            ref={videoRef}
+            src="/Highlights%20of%20Gokul%20-%20Arya.mp4" 
+            controls
+            playsInline
+            preload="metadata"
+            className="highlight-video"
+          ></video>
+       </div>
+    </section>
+  );
+};
 
 const HomePage = ({ data, activeHero, storySlideIndex, openGallery }) => (
   <main>
@@ -151,7 +199,9 @@ const HomePage = ({ data, activeHero, storySlideIndex, openGallery }) => (
     <section id="home" className="hero-container">
       <div className="hero-slider">
         {(data.hero || INITIAL_HERO).map((img, i) => (
-          <div key={i} className={`hero-slide ${i === activeHero ? 'active' : ''}`} style={{ backgroundImage: `url(${img})` }}></div>
+          <div key={i} className={`hero-slide ${i === activeHero ? 'active' : ''}`}>
+             <img src={img} alt="Hero Background" fetchpriority={i === 0 ? "high" : "auto"} loading={i === 0 ? "eager" : "lazy"} className="hero-slide-img" />
+          </div>
         ))}
         <div className="hero-overlay"></div>
         <div className="hero-content">
@@ -171,6 +221,9 @@ const HomePage = ({ data, activeHero, storySlideIndex, openGallery }) => (
          </div>
       </div>
     </section>
+
+    {/* HIGHLIGHT VIDEO */}
+    <HighlightVideo />
 
     {/* FILMS */}
     <section id="films" className="section films-section">
