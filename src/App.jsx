@@ -190,11 +190,14 @@ const HighlightVideo = () => {
         },
         events: {
           'onReady': (event) => {
+            event.target.setPlaybackQuality('hd1080');
+
             // Setup IntersectionObserver when player is ready
             const observer = new IntersectionObserver(
               ([entry]) => {
                 if (entry.isIntersecting) {
                   // Try to play when in view
+                  event.target.setPlaybackQuality('hd1080');
                   event.target.playVideo();
                 } else {
                   // Pause when out of view
@@ -207,6 +210,12 @@ const HighlightVideo = () => {
             if (wrapperRef.current) {
               observer.observe(wrapperRef.current);
               playerRef.current._observer = observer;
+            }
+          },
+          'onStateChange': (event) => {
+            // Force high quality again when it starts playing
+            if (event.data === window.YT.PlayerState.PLAYING) {
+              event.target.setPlaybackQuality('hd1080');
             }
           }
         }
